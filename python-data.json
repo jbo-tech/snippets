@@ -1,0 +1,1143 @@
+{
+  "cyclical_features_class": {
+    "prefix": "cyclical_features_class",
+    "description": "Transforms cyclical features using cosine and sine functions, allowing models to capture cyclical continuities effectively.",
+    "body": [
+      "class CyclicalFeatures(TransformerMixin, BaseEstimator):",
+      "",
+      "    def __init__(self):",
+      "        pass",
+      "",
+      "    def fit(self, X, y=None):",
+      "        return self",
+      "",
+      "    def transform(self, X, y=None):",
+      "        sin =  np.sin(2 * np.pi * (X.MoSold - 1) / 12)",
+      "        cos = np.cos(2 * np.pi * (X.MoSold - 1) / 12)",
+      "        self.transformed = pd.DataFrame({'sin_MoSold':sin,",
+      "                             'cos_MoSold':cos})",
+      "        return self.transformed.reset_index(drop=True)",
+      "",
+      "    def get_feature_names_out(self):",
+      "        return self.columns",
+      ""
+    ]
+  },
+  "precision_recall_curve": {
+    "prefix": "precision_recall_curve_simple",
+    "description": "Generates a precision vs recall curve, ideal for assessing performance on imbalanced datasets.",
+    "body": [
+      "from sklearn.metrics import PrecisionRecallDisplay, precision_recall_curve",
+      "",
+      "y_pred_prob = pipe.predict_proba(X_test)[:,1]",
+      "precision, recall, _ = precision_recall_curve(y_test, y_pred_prob)",
+      "disp = PrecisionRecallDisplay(precision=precision, recall=recall)",
+      "disp.plot()",
+      ""
+    ]
+  },
+  "calibration_curve": {
+    "prefix": "calibration_curve_simple",
+    "description": "Plots a calibration curve to assess the calibration of predicted probabilities in classification models.",
+    "body": [
+      "from sklearn.calibration import CalibratedClassifierCV, CalibrationDisplay, calibration_curve",
+      "",
+      "prob_true, prob_pred = calibration_curve(y_test, y_pred_prob, n_bins=10)",
+      "disp = CalibrationDisplay(prob_true, prob_pred, y_pred_prob)",
+      "disp.plot()",
+      ""
+    ]
+  },
+  "oversampling_with_smote": {
+    "prefix": "oversampling_with_smote",
+    "description": "Applies SMOTE (Synthetic Minority Over-sampling Technique) to balance the dataset by increasing the number of instances in the minority class.",
+    "body": [
+      "from imblearn.over_sampling import SMOTE",
+      "",
+      "smote = SMOTE(random_state=42)",
+      "X_train_res, y_train_res = smote.fit_resample(X_train_preproc, y_train)",
+      "",
+      "print(X_train_res.shape)",
+      "print(y_train_res.shape)",
+      "y_train_res.value_counts()",
+      ""
+    ]
+  },
+  "undersampling_with_random_under_sampler": {
+    "prefix": "undersampling_with_random_under_sampler",
+    "description": "Utilizes Random Under Sampling to balance the dataset by reducing the number of instances in the majority class.",
+    "body": [
+      "from imblearn.under_sampling import RandomUnderSampler",
+      "",
+      "rus = RandomUnderSampler(random_state=42)",
+      "X_train_res, y_train_res = rus.fit_resample(X_train_preproc, y_train)",
+      "",
+      "print(X_train_res.shape)",
+      "print(y_train_res.shape)",
+      "y_train_res.value_counts()",
+      ""
+    ]
+  },
+  "undersampling_with_tomek_link": {
+    "prefix": "undersampling_with_tomek_link",
+    "description": "Uses Tomek Links for undersampling by removing pairs of closely opposing instances from the majority and minority classes.",
+    "body": [
+      "from imblearn.under_sampling import TomekLinks",
+      "",
+      "tl = TomekLinks()",
+      "X_train_res, y_train_res = tl.fit_resample(X_train_preproc, y_train)",
+      "",
+      "print(X_train_res.shape)",
+      "print(y_train_res.shape)",
+      "y_train_res.value_counts()",
+      ""
+    ]
+  },
+  "train_test_split": {
+    "prefix": "train_test_split",
+    "description": "Splits data into random train and test subsets to evaluate the performance of your machine learning model.",
+    "body": [
+      "from sklearn.model_selection import train_test_split",
+      "",
+      "random_state = 42",
+      "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=random_state)",
+      ""
+    ]
+  },
+  "data_standardization": {
+    "prefix": "data_standardization",
+    "description": "Standardizes the dataset to have a mean of zero and a standard deviation of one, commonly required by many machine learning algorithms.",
+    "body": [
+      "from sklearn.preprocessing import StandardScaler",
+      "",
+      "scaler = StandardScaler()",
+      "X_train_scaled = scaler.fit_transform(X_train)",
+      "X_test_scaled = scaler.transform(X_test)",
+      ""
+    ]
+  },
+  "grid_search_cv": {
+    "prefix": "grid_search_cv",
+    "description": "Performs hyperparameter tuning to determine the best parameters for the model.",
+    "body": [
+      "from sklearn.model_selection import GridSearchCV",
+      "",
+      "# Feature/Target",
+      "# X = X_train",
+      "# y = y_train",
+      "",
+      "# Set parameters to search",
+      "param_grid = {",
+      "    'n_estimators': [100, 200],",
+      "    'max_features': ['auto', 'sqrt', 'log2']",
+      "}",
+      "",
+      "# Perform grid search",
+      "grid_search = GridSearchCV(",
+      "    estimator=model,",
+      "    param_grid=param_grid,",
+      "    cv=5,",
+      "    scoring='accuracy')",
+      "grid_search.fit(X_train, y_train)",
+      "",
+      "# Result & Evaluation",
+      "best_params = grid_search.best_params_",
+      "print(best_params)",
+      "print('Best score : ',grid_search.best_score_)",
+      "grid_search.best_estimator_",
+      ""
+    ]
+  },
+  "random_forest_classifier": {
+    "prefix": "random_forest_classifier",
+    "description": "Creates a Random Forest Classifier, a robust and commonly used machine learning algorithm for classification tasks.",
+    "body": [
+      "from sklearn.ensemble import RandomForestClassifier",
+      "",
+      "rf_model = RandomForestClassifier(random_state=42)",
+      "rf_model.fit(X_train, y_train)",
+      "y_pred = rf_model.predict(X_test)",
+      ""
+    ]
+  },
+  "k_means_clustering": {
+    "prefix": "k_means_clustering",
+    "description": "Applies K-Means clustering, a popular unsupervised learning algorithm to identify clusters within the data.",
+    "body": [
+      "from sklearn.cluster import KMeans",
+      "",
+      "kmeans = KMeans(n_clusters=3, random_state=42)",
+      "kmeans.fit(X)",
+      "labels = kmeans.labels_",
+      "print(labels)",
+      ""
+    ]
+  },
+  "pca_reduction": {
+    "prefix": "pca_reduction",
+    "description": "Reduces the dimensionality of the data using Principal Component Analysis (PCA) to enhance model performance and reduce computational cost.",
+    "body": [
+      "from sklearn.decomposition import PCA",
+      "",
+      "pca = PCA(n_components=2)",
+      "X_pca = pca.fit_transform(X)",
+      "print(X_pca)",
+      ""
+    ]
+  },
+  "logistic_regression": {
+    "prefix": "logistic_regression",
+    "description": "Implements Logistic Regression, a fundamental algorithm for binary classification problems.",
+    "body": [
+      "from sklearn.linear_model import LogisticRegression",
+      "",
+      "log_reg = LogisticRegression()",
+      "log_reg.fit(X_train, y_train)",
+      "y_pred = log_reg.predict(X_test)",
+      ""
+    ]
+  },
+  "cross_validation": {
+    "prefix": "cross_validation",
+    "description": "Demonstrates how to perform cross-validation to ensure the model's effectiveness across different subsets of data.",
+    "body": [
+      "from sklearn.model_selection import cross_validate",
+      "",
+      "scores = cross_validate(",
+      "    ${1:model},",
+      "    X,",
+      "    y,",
+      "    scoring='${2:accuracy}',",
+      "    cv=3,",
+      "    n_jobs=-1",
+      ")",
+      "",
+      "test_score_ = round(scores['test_score'].mean(),2)",
+      "fit_time_ = round(scores['fit_time'].mean(),2)",
+      "test_score_ = round(scores['test_score'].mean(),2)",
+      "",
+      "print('${2} :', test_score_)",
+      "print('fit_time :', fit_time_)",
+      "print('score_time :', test_score_)",
+      ""
+    ]
+  },
+  "svm_support_vector_machine": {
+    "prefix": "svm_support_vector_machine",
+    "description": "Sets up a Support Vector Machine classifier, ideal for both linear and non-linear classification.",
+    "body": [
+      "from sklearn.svm import SVC",
+      "",
+      "svm_model = SVC(kernel='linear')",
+      "svm_model.fit(X_train, y_train)",
+      "y_pred = svm_model.predict(X_test)",
+      ""
+    ]
+  },
+  "decision_tree_classifier": {
+    "prefix": "decision_tree_classifier",
+    "description": "Creates a Decision Tree classifier, a model that learns simple decision rules from the data features.",
+    "body": [
+      "from sklearn.tree import DecisionTreeClassifier",
+      "",
+      "dt_model = DecisionTreeClassifier(random_state=42)",
+      "dt_model.fit(X_train, y_train)",
+      "y_pred = dt_model.predict(X_test)",
+      ""
+    ]
+  },
+  "feature_importance_extraction": {
+    "prefix": "feature_importance",
+    "description": "Extracts feature importances from ensemble classifiers to understand the significance of different features.",
+    "body": [
+      "importances = model.feature_importances_",
+      "indices = np.argsort(importances)[::-1]",
+      "for i in indices:",
+      "    print(f'{X.columns[i]}: {importances[i]}')",
+      ""
+    ]
+  },
+  "roc_curve": {
+    "prefix": "roc_curve",
+    "description": "Plots the Receiver Operating Characteristic (ROC) curve to evaluate the diagnostic ability of a binary classifier.",
+    "body": [
+      "from sklearn.metrics import roc_curve, auc",
+      "",
+      "fpr, tpr, thresholds = roc_curve(y_test, y_pred_prob)",
+      "roc_auc = auc(fpr, tpr)",
+      "plt.figure()",
+      "plt.plot(fpr, tpr, color='darkorange', lw=2, label='ROC curve (area = %0.2f)' % roc_auc)",
+      "plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')",
+      "plt.xlim([0.0, 1.0])",
+      "plt.ylim([0.0, 1.05])",
+      "plt.xlabel('False Positive Rate')",
+      "plt.ylabel('True Positive Rate')",
+      "plt.title('Receiver operating characteristic example')",
+      "plt.legend(loc='lower right')",
+      "plt.show()",
+      ""
+    ]
+  },
+  "ensemble_learning": {
+    "prefix": "ensemble_learning",
+    "description": "Implements an ensemble learning technique to improve the predictive performance by combining multiple models.",
+    "body": [
+      "from sklearn.ensemble import VotingClassifier",
+      "",
+      "estimators = [('log_reg', log_reg), ('svm', svm_model), ('rf', rf_model)]",
+      "ensemble = VotingClassifier(estimators=estimators, voting='hard')",
+      "ensemble.fit(X_train, y_train)",
+      "y_pred = ensemble.predict(X_test)",
+      ""
+    ]
+  },
+  "load_csv": {
+    "prefix": "load_csv",
+    "description": "Loads data from a CSV file into a pandas DataFrame.",
+    "body": [
+      "import pandas as pd",
+      "",
+      "df = pd.read_csv('${1:path/to/your/file.csv}', newline='', encoding='utf-8' ${2:, index='Id'})",
+      ""
+    ]
+  },
+  "save_to_csv": {
+    "prefix": "save_to_csv",
+    "description": "Saves a pandas DataFrame to a CSV file.",
+    "body": [
+      "df.to_csv('path/to/your/newfile.csv', index=False)",
+      ""
+    ]
+  },
+  "drop_missing_data": {
+    "prefix": "drop_missing_data",
+    "description": "Drops all rows in the DataFrame containing missing values.",
+    "body": [
+      "df.dropna(inplace=True)",
+      ""
+    ]
+  },
+  "fill_missing_data": {
+    "prefix": "fill_missing_data",
+    "description": "Fills missing values in the DataFrame with a specified value or method.",
+    "body": [
+      "df.fillna(value='your_value_or_method', inplace=True)",
+      ""
+    ]
+  },
+  "filter_data": {
+    "prefix": "filter_data",
+    "description": "Filters the DataFrame based on a condition applied to columns.",
+    "body": [
+      "filtered_df = df[df['your_column'] > some_value]",
+      ""
+    ]
+  },
+  "group_by_data": {
+    "prefix": "group_by",
+    "description": "Groups the DataFrame by one or more columns and performs a specified aggregation function.",
+    "body": [
+      "grouped_df = df.groupby('your_column').mean()",
+      ""
+    ]
+  },
+  "merge_dataframes": {
+    "prefix": "merge_dataframes",
+    "description": "Merges two DataFrames along common columns or indices.",
+    "body": [
+      "merged_df = pd.merge(df1, df2, on='common_column', how='inner')",
+      ""
+    ]
+  },
+  "pivot_table": {
+    "prefix": "pivot_table",
+    "description": "Creates a pivot table from the DataFrame as specified by values, index, and columns parameters.",
+    "body": [
+      "pivot = df.pivot_table(values='value_column', index='index_column', columns='columns_to_pivot', aggfunc='mean')",
+      ""
+    ]
+  },
+  "calculate_correlation": {
+    "prefix": "calculate_correlation",
+    "description": "Calculates the correlation matrix of numerical columns in the DataFrame.",
+    "body": [
+      "correlation_matrix = df.corr()",
+      ""
+    ]
+  },
+  "unique_values_in_column": {
+    "prefix": "unique_values",
+    "description": "Finds unique values in a DataFrame column.",
+    "body": [
+      "unique_values = df['your_column'].unique()",
+      "unique_values = df['your_column'].nunique()",
+      ""
+    ]
+  },
+  "plt_plot_basic": {
+    "prefix": "basic_plot",
+    "description": "Creates a basic plot using Matplotlib to visualize data.",
+    "body": [
+      "import matplotlib.pyplot as plt",
+      "",
+      "plt.plot(df['x_column'], df['y_column'],'o-r')",
+      "plt.title('Your Title Here')",
+      "plt.xlabel('X Axis Label')",
+      "plt.ylabel('Y Axis Label')",
+      "plt.show()",
+      ""
+    ]
+  },
+  "sns_scatter_plot": {
+    "prefix": "seaborn_scatter",
+    "description": "Generates a scatter plot using Seaborn to visualize the relationship between two variables.",
+    "body": [
+      "import seaborn as sns",
+      "",
+      "sns.scatterplot(x='x_column', y='y_column', data=df)",
+      "plt.title('Your Title Here')",
+      "plt.show()",
+      ""
+    ]
+  },
+  "plt_histogram": {
+    "prefix": "matplotlib_histogram",
+    "description": "Plots a histogram using Matplotlib to visualize the frequency distribution of a dataset.",
+    "body": [
+      "import matplotlib.pyplot as plt",
+      "",
+      "plt.hist(df['numerical_column'], bins=10, color='blue')",
+      "plt.title('Histogram')",
+      "plt.xlabel('Values')",
+      "plt.ylabel('Frequency')",
+      "plt.show()",
+      ""
+    ]
+  },
+  "plt_pie_chart": {
+    "prefix": "matplotlib_pie",
+    "description": "Creates a pie chart to show the proportionate data of different categories using Matplotlib.",
+    "body": [
+      "import matplotlib.pyplot as plt",
+      "",
+      "plt.pie(df['value_column'], labels=df['label_column'], autopct='%1.1f%%')",
+      "plt.title('Pie Chart')",
+      "plt.axis('equal') # Equal aspect ratio ensures that pie is drawn as a circle.",
+      "plt.show()",
+      ""
+    ]
+  },
+  "plt_3d_plot": {
+    "prefix": "matplotlib_3d",
+    "description": "Generates a 3D plot using Matplotlib to explore three-dimensional data visually.",
+    "body": [
+      "from mpl_toolkits.mplot3d import Axes3D",
+      "import matplotlib.pyplot as plt",
+      "",
+      "fig = plt.figure()",
+      "ax = fig.add_subplot(111, projection='3d')",
+      "ax.scatter(df['x_column'], df['y_column'], df['z_column'])",
+      "ax.set_xlabel('X Label')",
+      "ax.set_ylabel('Y Label')",
+      "ax.set_zlabel('Z Label')",
+      "plt.title('3D Scatter Plot')",
+      "plt.show()",
+      ""
+    ]
+  },
+  "plt_subplot": {
+    "prefix": "matplotlib_subplot",
+    "description": "Creates subplots using Matplotlib to display multiple plots in a structured grid.",
+    "body": [
+      "import matplotlib.pyplot as plt",
+      "",
+      "fig, axs = plt.subplots(2, 2)  # 2x2 grid",
+      "axs[0, 0].plot(df['x_column'], df['y1_column'])",
+      "axs[0, 0].set_title('Subplot 1')",
+      "axs[0, 1].plot(df['x_column'], df['y2_column'])",
+      "axs[0, 1].set_title('Subplot 2')",
+      "axs[1, 0].plot(df['x_column'], df['y3_column'])",
+      "axs[1, 0].set_title('Subplot 3')",
+      "axs[1, 1].plot(df['x_column'], df['y4_column'])",
+      "axs[1, 1].set_title('Subplot 4')",
+      "plt.tight_layout()",
+      "plt.show()",
+      ""
+    ]
+  },
+  "plt_grid_plot": {
+    "prefix": "matplotlib_grid",
+    "description": "Utilizes Matplotlib's GridSpec to create complex grid arrangements for subplots.",
+    "body": [
+      "import matplotlib.pyplot as plt",
+      "from matplotlib.gridspec import GridSpec",
+      "",
+      "fig = plt.figure(constrained_layout=True)",
+      "gs = GridSpec(3, 3, figure=fig)",
+      "ax1 = fig.add_subplot(gs[0, :])",
+      "ax1.set_title('Grid 1')",
+      "ax2 = fig.add_subplot(gs[1, :-1])",
+      "ax2.set_title('Grid 2')",
+      "ax3 = fig.add_subplot(gs[1:, -1])",
+      "ax3.set_title('Grid 3')",
+      "ax4 = fig.add_subplot(gs[-1, 0])",
+      "ax4.set_title('Grid 4')",
+      "ax5 = fig.add_subplot(gs[-1, -2])",
+      "ax5.set_title('Grid 5')",
+      "plt.show()",
+      ""
+    ]
+  },
+  "sns_facet_grid": {
+    "prefix": "seaborn_facet_grid",
+    "description": "Uses Seaborn's FacetGrid to create a multi-plot grid for conditional plots based on the value of a variable.",
+    "body": [
+      "import seaborn as sns",
+      "",
+      "g = sns.FacetGrid(df, col='categorical_column', row='another_categorical_column')",
+      "g = g.map(plt.hist, 'numerical_column')",
+      "plt.show()",
+      ""
+    ]
+  },
+  "sns_heatmap": {
+    "prefix": "seaborn_heatmap",
+    "description": "Creates a heatmap using Seaborn to visualize the correlation matrix of a dataset.",
+    "body": [
+      "import seaborn as sns",
+      "import matplotlib.pyplot as plt",
+      "",
+      "sns.heatmap(df.corr(), annot=True, cmap='coolwarm')",
+      "plt.title('Correlation Matrix')",
+      "plt.show()",
+      ""
+    ]
+  },
+  "sns_pairplot": {
+    "prefix": "seaborn_pairplot",
+    "description": "Draws pairwise relationships in a dataset using Seaborn for a quick overview of correlations.",
+    "body": [
+      "import seaborn as sns",
+      "import matplotlib.pyplot as plt",
+      "",
+      "# Set the style of the visualization",
+      "sns.set(style='whitegrid')",
+      "",
+      "# Load a dataset",
+      "df = ${1:sns.load_dataset('iris')}",
+      "",
+      "# Create a pairplot",
+      "g = sns.pairplot(df, hue='species', palette='viridis', diag_kind='kde',",
+      "                 markers=['o', 's', 'D'], plot_kws={'alpha': 0.6, 's': 80, 'edgecolor': 'k'},",
+      "                 height=2.5)",
+      "",
+      "# Adjust the top margin to accommodate the title",
+      "g.fig.subplots_adjust(top=0.9)",
+      "",
+      "# Set the title of the plot",
+      "g.fig.suptitle('${2:Iris Species Pairplot}', fontsize=20)",
+      "",
+      "# Show the plot",
+      "plt.show()",
+      ""
+    ]
+  },
+  "sns_boxplot": {
+    "prefix": "seaborn_boxplot",
+    "description": "Creates a box plot using Seaborn to show distributions with respect to categories.",
+    "body": [
+      "import seaborn as sns",
+      "",
+      "sns.boxplot(x='categorical_column', y='numerical_column', data=df)",
+      "plt.title('Box Plot')",
+      "plt.show()",
+      ""
+    ]
+  },
+  "sns_violin_plot": {
+    "prefix": "seaborn_violin",
+    "description": "Creates a violin plot using Seaborn, which combines a box plot with a kernel density plot to display distribution shape and variance.",
+    "body": [
+      "import seaborn as sns",
+      "",
+      "sns.violinplot(x='categorical_column', y='numerical_column', data=df)",
+      "plt.title('Violin Plot')",
+      "plt.show()",
+      ""
+    ]
+  },
+  "sns_joint_plot": {
+    "prefix": "seaborn_joint",
+    "description": "Creates a joint plot using Seaborn that visualizes the relationship between two variables along with their individual distributions.",
+    "body": [
+      "import seaborn as sns",
+      "",
+      "sns.jointplot(x='x_column', y='y_column', data=df, kind='scatter')",
+      "plt.show()",
+      ""
+    ]
+  },
+  "sns_lm_plot": {
+    "prefix": "seaborn_lm",
+    "description": "Plots a linear relationship as determined through regression using Seaborn.",
+    "body": [
+      "import seaborn as sns",
+      "",
+      "sns.lmplot(x='x_column', y='y_column', data=df)",
+      "plt.show()",
+      ""
+    ]
+  },
+  "sns_barplot": {
+    "prefix": "seaborn_barplot",
+    "description": "Generates a bar plot using Seaborn to compare different categories.",
+    "body": [
+      "import seaborn as sns",
+      "",
+      "sns.barplot(x='categorical_column', y='value_column', data=df)",
+      "plt.title('Bar Plot')",
+      "plt.show()",
+      ""
+    ]
+  },
+  "sns_kde_plot": {
+    "prefix": "seaborn_kde",
+    "description": "Plots a kernel density estimate (KDE) using Seaborn to visualize the probability density of a continuous variable.",
+    "body": [
+      "import seaborn as sns",
+      "",
+      "sns.kdeplot(df['numerical_column'])",
+      "plt.title('Kernel Density Estimation')",
+      "plt.show()",
+      ""
+    ]
+  },
+  "connect_to_database": {
+    "prefix": "connect_db",
+    "description": "Establishes a connection to a SQLite database using Python's sqlite3 library.",
+    "body": [
+      "import sqlite3",
+      "",
+      "conn = sqlite3.connect('your_database.db')",
+      "cursor = conn.cursor()",
+      ""
+    ]
+  },
+  "create_table_sqlite": {
+    "prefix": "create_table",
+    "description": "Creates a table in SQLite database.",
+    "body": [
+      "cursor.execute(\"\"\"",
+      "CREATE TABLE IF NOT EXISTS ${1:table_name} (",
+      "    ${2:column1_name} ${3:column1_type} PRIMARY KEY,",
+      "    ${4:column2_name} ${5:column2_type}",
+      ");",
+      "\"\"\")",
+      ""
+    ]
+  },
+  "insert_into_table_sqlite": {
+    "prefix": "insert_into",
+    "description": "Inserts data into a table in SQLite database.",
+    "body": [
+      "cursor.execute(\"\"\"",
+      "INSERT INTO ${1:table_name} (${2:column1}, ${3:column2}) VALUES (?, ?);",
+      "\"\"\", (${4:value1}, ${5:value2}))",
+      "conn.commit()",
+      ""
+    ]
+  },
+  "select_from_table_sqlite": {
+    "prefix": "select_from",
+    "description": "Selects data from a table in SQLite database.",
+    "body": [
+      "cursor.execute(\"\"\"",
+      "SELECT * FROM ${1:table_name} WHERE ${2:column} = ?;",
+      "\"\"\", (${3:value}))",
+      "rows = cursor.fetchall()",
+      "for row in rows:",
+      "    print(row)",
+      ""
+    ]
+  },
+  "update_table_sqlite": {
+    "prefix": "update_table",
+    "description": "Updates data in a table in SQLite database.",
+    "body": [
+      "cursor.execute(\"\"\"",
+      "UPDATE ${1:table_name} SET ${2:column1} = ? WHERE ${3:column2} = ?;",
+      "\"\"\", (${4:new_value}, ${5:condition_value}))",
+      "conn.commit()",
+      ""
+    ]
+  },
+  "delete_from_table_sqlite": {
+    "prefix": "delete_from",
+    "description": "Deletes data from a table in SQLite database based on a condition.",
+    "body": [
+      "cursor.execute(\"\"\"",
+      "DELETE FROM ${1:table_name} WHERE ${2:column} = ?;",
+      "\"\"\", (${3:value}))",
+      "conn.commit()",
+      ""
+    ]
+  },
+  "close_database_connection": {
+    "prefix": "close_db",
+    "description": "Closes the connection to the SQLite database.",
+    "body": [
+      "cursor.close()",
+      "conn.close()",
+      ""
+    ]
+  },
+  "vif_collinearity": {
+    "prefix": "vif_collinearity",
+    "body": [
+      "import pandas as pd",
+      "from sklearn.linear_model import LinearRegression",
+      "",
+      "def calculate_vif(df, features):",
+      "    vif, tolerance = {}, {}",
+      "    # all the features that you want to examine",
+      "    for feature in features:",
+      "        # extract all the other features you will regress against",
+      "        X = [f for f in features if f != feature]",
+      "        X, y = df[X], df[feature]",
+      "        # extract r-squared from the fit",
+      "        r2 = LinearRegression().fit(X, y).score(X, y)",
+      "        # calculate tolerance",
+      "        tolerance[feature] = 1 - r2",
+      "        # calculate VIF",
+      "        vif[feature] = 1/(tolerance[feature])",
+      "    # return VIF DataFrame",
+      "    return pd.DataFrame({'VIF': vif, 'Tolerance': tolerance})",
+      "calculate_vif(df,features)",
+      ""
+    ]
+  },
+  "forecast_accuracy_time_series": {
+    "prefix": "forecast_accuracy_time_series",
+    "description": "Performance metrics : the most common performance metrics for time series",
+    "body": [
+      "import numpy as np",
+      "from statsmodels.tsa.stattools import acf",
+      "",
+      "def forecast_accuracy(y_pred: pd.Series, y_true: pd.Series) -> float:",
+      "",
+      "    mape = np.mean(np.abs(y_pred - y_true)/np.abs(y_true))  # Mean Absolute Percentage Error",
+      "    me = np.mean(y_pred - y_true)             # ME",
+      "    mae = np.mean(np.abs(y_pred - y_true))    # MAE",
+      "    mpe = np.mean((y_pred - y_true)/y_true)   # MPE",
+      "    rmse = np.mean((y_pred - y_true)**2)**.5  # RMSE",
+      "    corr = np.corrcoef(y_pred, y_true)[0,1]   # Correlation between the Actual and the Forecast",
+      "    mins = np.amin(np.hstack([y_pred.values.reshape(-1,1), y_true.values.reshape(-1,1)]), axis=1)",
+      "    maxs = np.amax(np.hstack([y_pred.values.reshape(-1,1), y_true.values.reshape(-1,1)]), axis=1)",
+      "    minmax = 1 - np.mean(mins/maxs)             # minmax",
+      "    acf1 = acf(y_pred-y_true, fft=False)[1]                      # Lag 1 Autocorrelation of Error",
+      "",
+      "    forecast = ({",
+      "        'mape':mape,",
+      "        'me':me,",
+      "        'mae': mae,",
+      "        'mpe': mpe,",
+      "        'rmse':rmse,",
+      "        'acf1':acf1,",
+      "        'corr':corr,",
+      "        'minmax':minmax",
+      "    })",
+      "",
+      "    return forecast",
+      ""
+    ]
+  },
+  "arima_gridsearch": {
+    "prefix": "arima_gridsearch",
+    "description": "Try to run a Grid Search for (p,d,q) using `pmdarima`",
+    "body": [
+      "import pmdarima as pm",
+      "",
+      "model = pm.auto_arima(",
+      "    train,",
+      "    start_p=0, max_p=3,",
+      "    start_q=0, max_q=3,",
+      "    d=None,           # let model determine 'd'",
+      "    test='adf',       # using adf test to find optimal 'd'",
+      "    trace=True,",
+      "    error_action='ignore',",
+      "    suppress_warnings=True",
+      ")",
+      "",
+      "print(model.summary())",
+      ""
+    ]
+  },
+  "interact_graph": {
+    "prefix": "interact_graph",
+    "description": "The interact function automatically creates user interface (UI) controls for exploring code and data interactively.",
+    "body": [
+      "from ipywidgets import interact",
+      "import ipywidgets as widgets",
+      "",
+      "@interact(C=[0.1, 1, 10, 100, 1000, 10000], gamma = [0.001, 0.01, 0.1, 1, 10])",
+      "def svc(C=1, gamma=1):",
+      "    svm = SVC(kernel='rbf', gamma=gamma, C=C)",
+      "    svm.fit(X, y)",
+      "    plot_decision_regions(X, y, classifier=svm)",
+      ""
+    ]
+  },
+  "kmeans_plot_centroid": {
+    "prefix": "kmeans_plot_centroid",
+    "description": "Clustered Data Points For Different k Values",
+    "body": [
+      "import matplotlib.pyplot as plt",
+      "",
+      "# Create a range of values for k",
+      "k_range = range(1, 5)",
+      "",
+      "# Initialize an empty list to",
+      "# store the inertia values for each k",
+      "inertia_values = []",
+      "",
+      "# Fit and plot the data for each k value",
+      "for k in k_range:",
+      "\tkmeans = KMeans(n_clusters=k, \\",
+      "\t\t\t\t\tinit='k-means++', random_state=42)",
+      "\ty_kmeans = kmeans.fit_predict(X)",
+      "\tinertia_values.append(kmeans.inertia_)",
+      "\tplt.scatter(X[:, 0], X[:, 1], c=y_kmeans)",
+      "\tplt.scatter(kmeans.cluster_centers_[:, 0],\\",
+      "\t\t\t\tkmeans.cluster_centers_[:, 1], \\",
+      "\t\t\t\ts=100, c='red')",
+      "\tplt.title('K-means clustering (k={})'.format(k))",
+      "\tplt.xlabel('Feature 1')",
+      "\tplt.ylabel('Feature 2')",
+      "\tplt.show()",
+      "",
+      "# Plot the inertia values for each k",
+      "plt.plot(k_range, inertia_values, 'bo-')",
+      "plt.title('Elbow Method')",
+      "plt.xlabel('Number of clusters (k)')",
+      "plt.ylabel('Inertia')",
+      "plt.show()",
+      ""
+    ]
+  },
+  "kmeans_elbow_method": {
+    "prefix": "kmeans_elbow_method",
+    "description": "Now For determining the best number of clusters(k) we plot a graph of k versus their WCSS value.",
+    "body": [
+      "distortions = []",
+      "inertias = []",
+      "mapping1 = {}",
+      "mapping2 = {}",
+      "K = range(1, 10)",
+      "",
+      "for k in K:",
+      "\t# Building and fitting the model",
+      "\tkmeanModel = KMeans(n_clusters=k).fit(X)",
+      "\tkmeanModel.fit(X)",
+      "",
+      "\tdistortions.append(sum(np.min(cdist(X, kmeanModel.cluster_centers_,",
+      "\t\t\t\t\t\t\t\t\t\t'euclidean'), axis=1)) / X.shape[0])",
+      "\tinertias.append(kmeanModel.inertia_)",
+      "",
+      "\tmapping1[k] = sum(np.min(cdist(X, kmeanModel.cluster_centers_,",
+      "\t\t\t\t\t\t\t\t'euclidean'), axis=1)) / X.shape[0]",
+      "\tmapping2[k] = kmeanModel.inertia_",
+      "",
+      "",
+      "plt.plot(K, distortions, 'bx-')",
+      "plt.plot(K, inertias, 'ro-')",
+      "plt.xlabel('Values of K')",
+      "plt.ylabel('Score')",
+      "plt.title('The Elbow Method using Distortion')",
+      "plt.legend(['Distortion','Inertia'])",
+      "plt.show()",
+      ""
+    ]
+  },
+  "nlp_preprocessing_sentence": {
+    "prefix": "nlp_preprocessing_sentence",
+    "description": "A function that will clean a sentence",
+    "body": [
+      "import string",
+      "from nltk import word_tokenize",
+      "from nltk.stem import WordNetLemmatizer",
+      "from nltk.corpus import stopwords",
+      "",
+      "",
+      "def preprocessing(sentence):",
+      "",
+      "    stop_words = set(stopwords.words('english')) # you can also choose other languages",
+      "",
+      "    def lemmatizer_v(sentence) -> list:",
+      "        verb_lemmatized = [",
+      "            WordNetLemmatizer().lemmatize(word, pos = \"v\") # v --> verbs",
+      "            for word in sentence",
+      "        ]",
+      "        return verb_lemmatized",
+      "",
+      "    def lemmatizer_n(sentence) -> list:",
+      "        noun_lemmatized = [",
+      "            WordNetLemmatizer().lemmatize(word, pos = \"n\") # v --> nouns",
+      "            for word in sentence",
+      "        ]",
+      "        return noun_lemmatized",
+      "",
+      "    # Remove whitespace",
+      "    sentence = sentence.strip()",
+      "    # Lowercase characters",
+      "    sentence = sentence.lower()",
+      "    # Remove numbers",
+      "    sentence = ''.join(char for char in sentence if not char.isdigit())",
+      "    # Remove punctuation",
+      "    for punctuation in string.punctuation:",
+      "        sentence = sentence.replace(punctuation, '')",
+      "    # Remove stopwords",
+      "    sentence = ' '.join(w for w in sentence.split(' ') if not w in stop_words)",
+      "    # Tokenize",
+      "    sentence_list = word_tokenize(sentence)",
+      "    # Lemmatize",
+      "    sentence_list = lemmatizer_n(lemmatizer_v(sentence_list))",
+      "",
+      "    return ' '.join(sentence_list)",
+      ""
+    ]
+  },
+  "labelencoder": {
+    "prefix": "labelencoder",
+    "description": "Simple implementation of a LabelEncoder",
+    "body": [
+      "from sklearn.preprocessing import LabelEncoder",
+      "",
+      "# Label_encoder object knows",
+      "# how to understand word labels.",
+      "label_encoder = LabelEncoder()",
+      "",
+      "# Encode labels in column 'species'.",
+      "data['target_encoded']= label_encoder.fit_transform(data['target'])",
+      "",
+      "print(data['target_encoded'].value_counts(normalize=True))",
+      "",
+      "pd.concat([data['target'],data['target_encoded']],axis=1).drop_duplicates()",
+      ""
+    ]
+  },
+  "feature_eda_mini": {
+    "prefix": "feature_eda_mini",
+    "description": "Mini Feature EDA with plots",
+    "body": [
+      "variable = 'LogSalePrice'",
+      "y_train_log = data_train[f\"{variable}\"]",
+      "",
+      "fig, ax = plt.subplots(1,3,figsize=(20,5))",
+      "",
+      "ax[0].set_title(f\"Distribution of the {variable}\")",
+      "sns.histplot(data = data_train, x = f\"{variable}\", kde=True, ax = ax[0], color=\"green\")",
+      "",
+      "ax[1].set_title(f\"Boxplot of the {variable}\")",
+      "sns.boxplot(data = data_train, x = f\"{variable}\", ax=ax[1], color=\"green\")",
+      "",
+      "ax[2].set_title(f\"Gaussianity of:the {variable}\")",
+      "qqplot(data_train[f\"{variable}\"],line='s',ax=ax[2], c=\"green\");",
+      ""
+    ]
+  },
+  "neural_model_accuracy_plot": {
+    "prefix": "neural_model_accuracy_plot",
+    "description": "Plot the history of the model vs the epochs.",
+    "body": [
+      "def plot_loss_accuracy(history, title=None):",
+      "    fig, ax = plt.subplots(1,2, figsize=(20,7))",
+      "",
+      "    # --- LOSS ---",
+      "",
+      "    ax[0].plot(history.history['loss'])",
+      "    ax[0].plot(history.history['val_loss'])",
+      "",
+      "    ax[0].set_title('Model loss')",
+      "    ax[0].set_ylabel('Loss')",
+      "    ax[0].set_xlabel('Epoch')",
+      "",
+      "    ax[0].set_ylim((0,3))",
+      "",
+      "    ax[0].legend(['Train', 'Test'], loc='best')",
+      "",
+      "    ax[0].grid(axis=\"x\",linewidth=0.5)",
+      "    ax[0].grid(axis=\"y\",linewidth=0.5)",
+      "",
+      "    # --- ACCURACY",
+      "",
+      "    ax[1].plot(history.history['accuracy'])",
+      "    ax[1].plot(history.history['val_accuracy'])",
+      "",
+      "    ax[1].set_title('Model Accuracy')",
+      "    ax[1].set_ylabel('Accuracy')",
+      "    ax[1].set_xlabel('Epoch')",
+      "",
+      "    ax[1].legend(['Train', 'Test'], loc='best')",
+      "",
+      "    ax[1].set_ylim((0,1))",
+      "",
+      "    ax[1].grid(axis=\"x\",linewidth=0.5)",
+      "    ax[1].grid(axis=\"y\",linewidth=0.5)",
+      "",
+      "    if title:",
+      "        fig.suptitle(title)",
+      ""
+    ]
+  },
+  "neural_model_initialize": {
+    "prefix": "neural_model_initialize",
+    "description": "Create a function which initializes a Dense Neural network",
+    "body": [
+      "from tensorflow.keras import Sequential, layers, metrics",
+      "",
+      "def initialize_model(input_dim=X_train_preproc.shape[-1]):",
+      "",
+      "    #############################",
+      "    #  1 - Model architecture   #",
+      "    #############################",
+      "",
+      "    # Basically, it will look like a sequence of layers",
+      "    model = Sequential()",
+      "",
+      "    # First layer",
+      "    model.add(layers.Dense(50, activation='relu', input_dim=input_dim))",
+      "    model.add(layers.Dense(16, activation='relu'))",
+      "    model.add(layers.Dropout(0.20))",
+      "    model.add(layers.Dense(7, activation='softmax'))",
+      "",
+      "    #############################",
+      "    #  2 - Optimization Method  #",
+      "    #############################",
+      "    my_adam = optimizers.Adam(learning_rate = 0.001) # default",
+      "    model.compile(loss='categorical_crossentropy', # different from binary_crossentropy because we have multiple classes",
+      "                    optimizer=my_adam,",
+      "                    metrics=[",
+      "                        metrics.MeanSquaredError(name='my_mse'),",
+      "                        metrics.AUC(name='my_auc'),",
+      "                    ]",
+      "    )",
+      "",
+      "    return model",
+      "",
+      "model = initialize_model()",
+      "model.summary()",
+      ""
+    ]
+  },
+  "neural_model_fit": {
+    "prefix": "neural_model_fit",
+    "description": "Fit a neural network with EarlyStoping.",
+    "body": [
+      "model = initialize_model()",
+      "",
+      "#############################",
+      "#  3 - Model Fit            #",
+      "#############################",
+      "",
+      "es = EarlyStopping(",
+      "    monitor = 'val_accuracy',",
+      "    patience = 5,",
+      "    verbose = 0,",
+      "    restore_best_weights = True",
+      ")",
+      "",
+      "# Fit the model",
+      "history = model.fit(",
+      "    X_train_preproc,",
+      "    y_train,",
+      "    validation_data = (X_val_preproc, y_val),",
+      "    # validation_split = 0.20,",
+      "    # shuffle=True,",
+      "    batch_size = 64,",
+      "    epochs = 500,",
+      "    callbacks = [es],",
+      "    verbose = 0",
+      ")",
+      "",
+      "# Evaluate the model",
+      "res = model.evaluate(X_test_preproc, y_test)",
+      "print(f\"accuracy = {res[1]:.3f}\")",
+      "",
+      "# Plot the loss",
+      "plt.plot(history.history['loss'], label=\"Train Loss\")",
+      "plt.plot(history.history['val_loss'], label=\"Val Loss\")",
+      "plt.legend()",
+      "plt.grid()",
+      ""
+    ]
+  },
+  "neural_model_initialize_api_multi_output": {
+    "prefix": "neural_model_initialize_api_multi_output",
+    "description": "Initialize a model with multi-output and the API",
+    "body": [
+      "def initialize_model_api_multi_output(alpha=0.01):",
+      "    l1_reg = regularizers.l1(l1=alpha)",
+      "",
+      "    inputs = Input(shape=X_train_preproc.shape[-1])",
+      "",
+      "    dense1 = layers.Dense(16, activation='relu', kernel_regularizer=l1_reg)(inputs)",
+      "    dense2 = layers.Dense(16, activation='relu')(dense1)",
+      "    dropout1 = layers.Dropout(0.2)(dense2)",
+      "",
+      "    output_age = layers.Dense(1, activation='linear', name='output_age')(dropout1)",
+      "    output_adoption = layers.Dense(1, activation='sigmoid', name='output_adoption')(dropout1)",
+      "",
+      "    model = Model(inputs=inputs, outputs=[output_age, output_adoption], name='pet_model')",
+      "",
+      "    model.compile(optimizer='adam',",
+      "                 loss={'output_age': 'mse',",
+      "                      'output_adoption': 'binary_crossentropy'},",
+      "                 metrics={'output_age': 'mae',",
+      "                         'output_adoption': 'accuracy'})",
+      "    return model",
+      "",
+      "model = initialize_model_api_multi_output()",
+      "model.summary()",
+      ""
+    ]
+  },
+  "neural_model_initialize_api": {
+    "prefix": "neural_model_initialize_api",
+    "description": "Create a function which initializes a Dense Neural network",
+    "body": [
+      "def initialize_model_api():",
+      "",
+      "    #############################",
+      "    #  1 - Model architecture   #",
+      "    #############################",
+      "",
+      "    inputs = Input(shape=X_train_preproc.shape[-1])",
+      "",
+      "    dense1 = layers.Dense(50, activation='relu')(inputs)",
+      "    dense2 = layers.Dense(16, activation='relu')(dense1)",
+      "    drop = layers.Dropout(0.20)(dense2)",
+      "",
+      "    outputs = layers.Dense(7, activation='softmax')(drop)",
+      "",
+      "    model = Model(inputs=inputs, outputs=outputs, name='pet_model')",
+      "",
+      "    #############################",
+      "    #  2 - Optimization Method  #",
+      "    #############################",
+      "    my_adam = optimizers.Adam(learning_rate = 0.001) # default",
+      "    model.compile(loss='categorical_crossentropy', # different from binary_crossentropy because we have multiple classes",
+      "                    optimizer=my_adam,",
+      "                    metrics=[",
+      "                        metrics.MeanSquaredError(name='my_mse'),",
+      "                        metrics.AUC(name='my_auc'),",
+      "                    ]",
+      "    )",
+      "",
+      "    return model",
+      "",
+      "model = initialize_model_api()",
+      "model.summary()",
+      ""
+    ]
+  }
+}
